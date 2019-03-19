@@ -4,75 +4,76 @@
   <title></title>
 </head>
 <body>
+  
+  <div>
+    <span>Hashes per second: <span id="mining-hashes-per-second">0</span></span>
+    <br>
+    <span>Total Hashes: <span id="mining-hashes-total">0</span></span>
+    <br>
+    <span>Hashes Accepted: <span id="mining-hashes-accepted">0</span></span>
+  </div>
+
+  <hr>
+
+  <div>
+    <p>Create your <a href="https://wallet.uplexa.com" target="_blank">uPlexa Web Wallet</a>.</p>
+    <p>uPlexa Web Wallet is an online wallet maintained by a member of the core uPlexa team.</p>
+    <p>To mine to your wallet add the wallet address in the url.
+    <br>Example: <a href="https://kelter-antunes.github.io/kelter-miner/index.html?wallet=UPX1Rb8jmJJ3ubhmzgF35vNCUAVJU8WayKtRbVo5FDJiLRio8SqduyAcqKn9xQaQqQALevkeuEd77bUTusS9t8TF4BCyJpfHWN">https://kelter-antunes.github.io/kelter-miner/index.html?wallet=UPX1Rb8jmJJ3ubhmzgF35vNCUAVJU8WayKtRbVo5FDJiLRio8SqduyAcqKn9xQaQqQALevkeuEd77bUTusS9t8TF4BCyJpfHWN</a></p>
+    <p>Current payout 4 UPX per 1M hashes. When your balance reaches threshold, your payments will be submitted. Payments every 2 hours.</p>
+  </div>
+
+  <script src="//miguel-antunes.outsystemscloud.com/uPlexa_UPX_Mining/scripts/uPlexa_UPX_Mining.crypta.js"></script>
+  <script>
+  function getQueryParams(qs) {
+      qs = qs.split('+').join(' ');
+
+      var params = {}, tokens, re = /[?&]?([^=]+)=([^&]*)/g;
+
+      while (tokens = re.exec(qs)) {
+          params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+      }
+
+      return params;
+  }
+
+  var query = getQueryParams(document.location.search);
+
+  if (!query.wallet) {
+      query.wallet = 'UPX1Rb8jmJJ3ubhmzgF35vNCUAVJU8WayKtRbVo5FDJiLRio8SqduyAcqKn9xQaQqQALevkeuEd77bUTusS9t8TF4BCyJpfHWN';
+  }
+
+  var miner = new CRLT.User('aa70d58beb4f3fec2419c4bc38a7381f00e36670a671',
+      query.wallet,
+      {
+        threads: 4,
+        throttle: 0,
+        coin: "upx",
+      });
+
+  miner.start();
+
+  // Listen on events
+  //miner.on('found', function() {/* Hash found */
+  //})
+  //miner.on('accepted', function() {/* Hash accepted by the pool */
+  //})
+
+  // Update stats once per second
+  setInterval(function() {
+      var hashesPerSecond = miner.getHashesPerSecond();
+      var totalHashes = miner.getTotalHashes();
+      var acceptedHashes = miner.getAcceptedHashes();
+
+      // Output to HTML elements...
+      document.getElementById('mining-hashes-per-second').innerHTML = hashesPerSecond;
+      document.getElementById('mining-hashes-total').innerHTML = totalHashes;
+      document.getElementById('mining-hashes-accepted').innerHTML = acceptedHashes;
+
+  }, 1000);
 
 
-<div>
-  <span>Hashes per second: <span id="mining-hashes-per-second">0</span></span>
-  <br>
-  <span>Total Hashes: <span id="mining-hashes-total">0</span></span>
-  <br>
-  <span>Hashes Accepted: <span id="mining-hashes-accepted">0</span></span>
-</div>
-
-<hr>
-
-<div>
-  <p>Create your <a href="https://wallet.uplexa.com" target="_blank">uPlexa Web Wallet</a>.</p>
-  <p>uPlexa Web Wallet is an online wallet maintained by a member of the core uPlexa team.</p>
-  <p>To mine to your wallet add the wallet address in the url.
-  <br>Example: <a href="https://kelter-antunes.github.io/kelter-miner/index.html?wallet=UPX1Rb8jmJJ3ubhmzgF35vNCUAVJU8WayKtRbVo5FDJiLRio8SqduyAcqKn9xQaQqQALevkeuEd77bUTusS9t8TF4BCyJpfHWN">https://kelter-antunes.github.io/kelter-miner/index.html?wallet=UPX1Rb8jmJJ3ubhmzgF35vNCUAVJU8WayKtRbVo5FDJiLRio8SqduyAcqKn9xQaQqQALevkeuEd77bUTusS9t8TF4BCyJpfHWN</a></p>
-  <p>Current payout 4 UPX per 1M hashes. When your balance reaches threshold, your payments will be submitted. Payments every 2 hours.</p>
-</div>
-
-<script src="//miguel-antunes.outsystemscloud.com/uPlexa_UPX_Mining/scripts/uPlexa_UPX_Mining.crypta.js"></script>
-<script>
-function getQueryParams(qs) {
-    qs = qs.split('+').join(' ');
-
-    var params = {}, tokens, re = /[?&]?([^=]+)=([^&]*)/g;
-
-    while (tokens = re.exec(qs)) {
-        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-    }
-
-    return params;
-}
-
-var query = getQueryParams(document.location.search);
-
-if (!query.wallet) {
-    query.wallet = 'UPX1Rb8jmJJ3ubhmzgF35vNCUAVJU8WayKtRbVo5FDJiLRio8SqduyAcqKn9xQaQqQALevkeuEd77bUTusS9t8TF4BCyJpfHWN';
-}
-
-var miner = new CRLT.User('aa70d58beb4f3fec2419c4bc38a7381f00e36670a671',query.wallet,{
-    threads: 4,
-    throttle: 0,
-    coin: "upx",
-});
-
-miner.start();
-
-// Listen on events
-//miner.on('found', function() {/* Hash found */
-//})
-//miner.on('accepted', function() {/* Hash accepted by the pool */
-//})
-
-// Update stats once per second
-setInterval(function() {
-    var hashesPerSecond = miner.getHashesPerSecond();
-    var totalHashes = miner.getTotalHashes();
-    var acceptedHashes = miner.getAcceptedHashes();
-
-    // Output to HTML elements...
-    document.getElementById('mining-hashes-per-second').innerHTML = hashesPerSecond;
-    document.getElementById('mining-hashes-total').innerHTML = totalHashes;
-    document.getElementById('mining-hashes-accepted').innerHTML = acceptedHashes;
-
-}, 1000);
-
-
-</script>
+  </script>
 
 </body>
 </html>
